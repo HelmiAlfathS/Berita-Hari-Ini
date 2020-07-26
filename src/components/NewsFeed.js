@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 // Initiate default state
 const defaultNews = {
@@ -22,18 +23,29 @@ const NewsFeed = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${endpoint}&page=${page}`);
-        const result = await response.json();
-        setNews((current) => {
+        // const response = await fetch(`${endpoint}&page=${page}`);
+        // const result = await response.json();
+        // setNews((current) => {
+        //   return {
+        //     ...result,
+        //     totalResult: result.totalResult,
+        //     articles: [...current.articles, ...result.articles],
+        //     status: result.status,
+        //   };
+        // });
+
+        const res = await axios.get(`${endpoint}&page=${page}`);
+        setNews((cur) => {
           return {
-            ...result,
-            totalResult: result.totalResult,
-            articles: [...current.articles, ...result.articles],
-            status: result.status,
+            ...defaultNews,
+            articles: [...cur.articles, ...res.data.articles],
+            totalResult: res.data.totalResults,
+            status: res.data.status,
           };
         });
-        if (result.status !== 'ok') {
+        if (res.data.status === 'ok') {
           throw new Error('error');
+          console.log(res.status);
         }
       } catch (error) {
         setError(true);
@@ -61,7 +73,7 @@ const NewsFeed = () => {
           </li>
         ))}
       </ol>
-      {news.articles.length < parseInt(news.totalResults) ? (
+      {news.articles.length < parseInt(news.totalResult) ? (
         <button
           className="btn btn-primary mt-3"
           onClick={() => {

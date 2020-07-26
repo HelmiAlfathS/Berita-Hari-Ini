@@ -23,6 +23,7 @@ const NewsFeed = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
+        // yang ini pake fetch, yg bawah pake axios
         // const response = await fetch(`${endpoint}&page=${page}`);
         // const result = await response.json();
         // setNews((current) => {
@@ -43,7 +44,7 @@ const NewsFeed = () => {
             status: res.data.status,
           };
         });
-        if (res.data.status === 'ok') {
+        if (res.data.status !== 'ok') {
           throw new Error('error');
           console.log(res.status);
         }
@@ -69,6 +70,7 @@ const NewsFeed = () => {
         {news.articles.map((data, index) => (
           <li className="list-group-item" key={index}>
             {' '}
+            <span className="mr-3">{index + 1}.</span>{' '}
             <a href={data.url}>{data.title}</a>{' '}
           </li>
         ))}
@@ -80,7 +82,7 @@ const NewsFeed = () => {
             setPage((current) => current + 1);
           }}
         >
-          loadmore
+          Load More
         </button>
       ) : null}
 
